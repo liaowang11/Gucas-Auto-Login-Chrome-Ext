@@ -1,0 +1,62 @@
+<html>
+  <script type="text/javascript">
+    var gucas_login_url = "https://auth.gucas.ac.cn/php/user_login.php";
+    while(localStorage["usr"] == undefined || localStorage["pwd"] == undefined || localStorage["domainid"] == undefined){
+    }
+    var username = localStorage["usr"];
+    var password = localStorage["pwd"];
+    var domainid = localStorage["domainid"];
+    var xhr = new XMLHttpRequest();
+    var loggedin = false;
+    var suc_noti = webkitNotifications.createNotification(
+        'logo.gif',
+        'Logged In',
+        'You have successfully logined into the gucas network!');
+
+    var fail_noti = webkitNotifications.createNotification(
+        'logo_black.gif',
+        'Failed',
+        'Unable to log in. Please check your username and password, domain as well');
+    xhr.onreadystatechange = login(xhr);
+    xhr.open("POST", gucas_login_url, false);
+    xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+    xhr.send("loginuser="+ username + "&domainid=" + domainid +"&password=" + password + "&logintype=%C1%AC%CF%DF%B3%C7%D3%F2");
+         //TODO:the logintype is a little weired here, find out more. it's gbk encoding,ok?
+        //we are not yet logged in,until referring the location it returns
+    login(xhr);
+    function login(xhr){
+        if(xhr.readyState == 4){
+            response = xhr.response;
+            if(response.search("location") != -1)
+            {
+                var new_xhr = new XMLHttpRequest();
+                new_xhr.open("GET", "https://auth.gucas.ac.cn/php/login_net.php?mode=0&quick=yes&ref=", true);
+                new_xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+                new_xhr.onreadystatechange = finish_login;
+                new_xhr.send(); //finished login
+            }else{
+                fail_noti.show();
+                setTimeout(function(){fail_noti.cancel();}, 750);
+            }
+        }
+    }
+    function finish_login(){
+        chrome.browserAction.setIcon({path:"logo.gif"});
+        suc_noti.show();
+        setTimeout(function(){suc_noti.cancel();}, 750);
+        loggedin = true;
+        var new_xhr = new XMLHttpRequest();
+        new_xhr.open("GET", "https://auth.gucas.ac.cn/php/onlinestatus.php", false);
+        new_xhr.send();
+        if(new_xhr.readyState == 4){
+            var response = new_xhr.response;
+            update_data(response);
+        }
+    }
+    function update_data(response){
+        console.log(response);
+        //TODO:how to parse the response?
+    }
+
+  </script>
+</html>

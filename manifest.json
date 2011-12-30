@@ -1,0 +1,16 @@
+{
+"name" : "gucas_autologin",
+"version" : "1.0",
+"description" : "Autologin to gucas network with your own username and pwd.",
+"browser_action" : {
+  "default_icon" : "logo_black.gif",
+  "default_popup" : "popup.html",
+  "default_title" : "Gucas Network"
+  },
+"background_page" : "background.html",
+"options_page" : "options.html",
+"permissions" : [
+  "notifications",
+  "https://auth.gucas.ac.cn/*"
+]
+}

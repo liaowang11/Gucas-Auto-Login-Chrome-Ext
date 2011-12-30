@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <title>GucasAutoLogin Options</title>
+    <script type="text/javascript">
+      function save_options(){
+          var username = document.getElementById("usr").value;
+          var password = document.getElementById("pwd").value;
+          var select = document.getElementById("domain");
+          var domain = select.children[select.selectedIndex].value + 1;
+          localStorage["usr"] = username;
+          localStorage["pwd"] = password;
+          localStorage["domainid"] = select.selectedIndex;
+          var status = document.getElementById("status");
+          status.innerHTML = "Options Saved.";
+          setTimeout(function(){
+            status.innerHTML = "";}, 750);
+      }
+      function restore_options(){
+          var username = localStorage["usr"];
+          var password = localStorage["pwd"];
+          var domainid = localStorage["domainid"] - 1;
+          getElementById("usr").value = username;
+          getElementById("pwd").value = password;
+          var select = getElementById("domain");
+          select.children[domainid].selected = true;
+      }
+
+    </script>
+  </head>
+  <body>
+    <input type="text" name="username" value="Username" id="usr" />
+    <input type="password" name="pwd" value="Password" id="pwd"/>
+    <select id="domain">
+      <option value="gucas">@gucas.ac.cn</option>
+      <option value="mailsgucas">@mails.gucas.ac.cn</option>
+    </select>
+    <div id="status" class="alert"></div>
+    <button onclick="save_options()">Save</button>
+  </body>
+</html>
